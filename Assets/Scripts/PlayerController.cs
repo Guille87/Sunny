@@ -4,8 +4,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] float speed;
     [SerializeField] float jumpSpeed;
+    [SerializeField] Transform groundCheck; // Punto de verificación del suelo
+    [SerializeField] float groundCheckRadius = 0.1f; // Radio del círculo de verificación
+    [SerializeField] LayerMask groundLayers; // Capa que define el suelo
+
     Rigidbody2D rb;
-    Collider2D col;
 
     float moveX;
     bool jump;
@@ -13,7 +16,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
     }
 
     void FixedUpdate()
@@ -54,9 +56,24 @@ public class PlayerController : MonoBehaviour
 
         jump = false;
 
-        if (!col.IsTouchingLayers(LayerMask.GetMask("Terrain", "Platforms")))
-            return;
+        if (!IsGrounded()) return;
         
-        rb.linearVelocity += new Vector2(0, jumpSpeed);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
+    }
+
+    bool IsGrounded()
+    {
+        // Verifica si el punto groundCheck está tocando la capa del suelo
+        return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayers);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Dibuja el círculo de verificación del suelo en el editor para depuración
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
     }
 }
