@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask groundLayers; // Capa que define el suelo
 
     Rigidbody2D rb;
+    Animator anim;
 
     float moveX;
     bool jump;
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     void FixedUpdate()
@@ -38,6 +40,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 vel = new Vector2(moveX * speed * Time.fixedDeltaTime, rb.linearVelocity.y);
         rb.linearVelocity = vel;
+
+        anim.SetBool("isRunning", Mathf.Abs(rb.linearVelocity.x) > Mathf.Epsilon);
     }
 
     void Flip()
@@ -59,6 +63,8 @@ public class PlayerController : MonoBehaviour
         if (!IsGrounded()) return;
         
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
+        
+        anim.SetTrigger("isJumping");
     }
 
     bool IsGrounded()
