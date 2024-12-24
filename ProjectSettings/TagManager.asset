@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Gem
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Traps
   - Player
   - Background
-  - 
+  - Items
   - 
   - 
   - 
@@ -55,6 +56,9 @@ TagManager:
     locked: 0
   - name: Traps
     uniqueID: 411601817
+    locked: 0
+  - name: Items
+    uniqueID: 3225695761
     locked: 0
   - name: Player
     uniqueID: 2763969319
