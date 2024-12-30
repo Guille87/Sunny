@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     float moveX;
     bool jump;
+    bool isGrounded;
 
     void Start()
     {
@@ -25,11 +26,15 @@ public class PlayerController : MonoBehaviour
         Run();
         Flip();
         Jump();
+        UpdateGroundStatus();
+        UpdateJumpAndFallAnimation();
     }
 
     void Update()
     {
         moveX = Input.GetAxisRaw("Horizontal");
+
+        // Detectar si el jugador presiona el botón de salto
         if (!jump && Input.GetButtonDown("Jump"))
         {
             jump = true;
@@ -38,14 +43,17 @@ public class PlayerController : MonoBehaviour
 
     void Run()
     {
+        // Movimiento horizontal
         Vector2 vel = new Vector2(moveX * speed * Time.fixedDeltaTime, rb.linearVelocity.y);
         rb.linearVelocity = vel;
 
+        // Animación de correr o estar quieto
         anim.SetBool("isRunning", Mathf.Abs(rb.linearVelocity.x) > Mathf.Epsilon);
     }
 
     void Flip()
     {
+        // Girar el jugador al caminar de izquierda a derecha
         float vx = rb.linearVelocity.x;
 
         if (Mathf.Abs(vx) > Mathf.Epsilon)
@@ -60,11 +68,40 @@ public class PlayerController : MonoBehaviour
 
         jump = false;
 
-        if (!IsGrounded()) return;
+        if (!isGrounded) return;
         
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
-        
-        anim.SetTrigger("isJumping");
+    }
+
+    void UpdateGroundStatus()
+    {
+        // Verifica si el jugador está tocando el suelo
+        isGrounded = IsGrounded();
+    }
+
+    void UpdateJumpAndFallAnimation()
+    {
+        if (isGrounded)
+        {
+            // Si está en el suelo, desactivar salto y caída
+            anim.SetBool("isJumping", false);
+            anim.SetBool("isFalling", false);
+        }
+        else
+        {
+            if (rb.linearVelocity.y > 0)
+            {
+                // El jugador está saltando
+                anim.SetBool("isJumping", true);
+                anim.SetBool("isFalling", false);
+            }
+            else if (rb.linearVelocity.y < 0)
+            {
+                // El jugador está cayendo
+                anim.SetBool("isJumping", false);
+                anim.SetBool("isFalling", true);
+            }
+        }
     }
 
     bool IsGrounded()

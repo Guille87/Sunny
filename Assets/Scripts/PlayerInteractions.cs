@@ -22,13 +22,13 @@ public class PlayerInteractions : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Trap" || collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Trap") || collision.gameObject.CompareTag("Enemy"))
         {
-            StartCoroutine(DieAndRebord());
+            StartCoroutine(DieAndReborn());
         }
     }
 
-    IEnumerator DieAndRebord()
+    IEnumerator DieAndReborn()
     {
         // Eliminar la velocidad del jugador
         rb.linearVelocity = Vector2.zero;
